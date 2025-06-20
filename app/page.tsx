@@ -58,7 +58,7 @@ export default function Home() {
     } else {
       setUserData(null);
       setStatusMessage(
-        "Invalid User: No player ID found. Please login via the given URL (e.g., /login?id=YOUR_DISCORD_ID)."
+        "Invalid User: No player ID found. Please login via the given URL."
       );
       setLoading(false);
     }
