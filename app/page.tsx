@@ -1,155 +1,152 @@
-// app/page.tsx
-'use client';
+"use client";
 
-// Import components
-import ProfessorMessage from './components/ProfessorMessage';
-import UserProfile from './components/UserProfile';
-import LeadPokemon from './components/LeadPokemon';
-import BattleButton from './components/BattleButton';
-import ChallengeTeam from './components/ChallengeTeam';
-import BagOverview from './components/BagOverview';
-import Link from 'next/link'; // Import Link
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
-// --- START: Define Interfaces for your data structures ---
 interface UserData {
+  discordId: string;
   name: string;
-  level: number;
   badges: number;
-  avatar: string;
-}
-
-interface LeadPokemonData {
-  name: string;
-  level: number;
-  hp: number;
-  maxHp: number;
+  money: number;
+  encounters: number;
+  newEncounters: number;
   sprite: string;
-  status: string;
+  delay: number;
 }
-
-interface ProfessorMessageDataType {
-  message: string;
-  professor: string;
-}
-
-interface TeamPokemon {
-  name: string;
-  hp: number;
-  maxHp: number;
-  spriteSrc: string;
-}
-
-interface BagItem {
-  name: string;
-  quantity: number;
-}
-
-interface BagTM {
-  name: string;
-  number: number;
-}
-// --- END: Define Interfaces for your data structures ---
-
-
-// --- START: Your data, now strongly typed and OUTSIDE the Home component ---
-const userData: UserData = {
-  name: "Ash Ketchum",
-  level: 25,
-  badges: 5,
-  avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/ash.png",
-};
-
-const leadPokemonData: LeadPokemonData = {
-  name: "Pikachu",
-  level: 60,
-  hp: 85,
-  maxHp: 100,
-  sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-  status: "Healthy",
-};
-
-const professorMessageData: ProfessorMessageDataType = {
-  message: "Guten Morgen, Trainer! Vergiss nicht, deine Pokémon zu trainieren und neue Herausforderungen zu suchen!",
-  professor: "Professor Eich",
-};
-
-const challengeTeamData: TeamPokemon[] = [
-  { name: "Charizard", hp: 90, maxHp: 100, spriteSrc: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png" },
-  { name: "Blastoise", hp: 75, maxHp: 100, spriteSrc: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png" },
-  { name: "Venusaur", hp: 100, maxHp: 100, spriteSrc: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png" },
-  { name: "Snorlax", hp: 60, maxHp: 100, spriteSrc: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png" },
-];
-
-const bagItemsData: BagItem[] = [
-  { name: "Hypertrank", quantity: 3 },
-  { name: "Top-Beleber", quantity: 1 },
-  { name: "Fluchtseil", quantity: 2 },
-];
-
-const bagTmsData: BagTM[] = [
-  { name: "Donnerblitz", number: 24 },
-  { name: "Erdbeben", number: 26 },
-];
-// --- END: Your data ---
-
 
 export default function Home() {
-  const handleBattleClick = () => {
-    alert("Battle Commencing! (This would navigate to a battle screen)");
-  };
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async (id: string) => {
+      setLoading(true);
+      setStatusMessage("Loading player data...");
+      try {
+        const response = await fetch(`/api/backend/${id}`);
+
+        console.log("Fetch response:", response);
+
+        if (response.status === 400) {
+          setStatusMessage(
+            "Invalid User: Player data not found. Please ensure you are logged in via the correct URL."
+          );
+          setUserData(null);
+          localStorage.removeItem("user_id");
+        } else if (!response.ok) {
+          throw new Error(
+            `Failed to fetch player data: ${response.statusText}`
+          );
+        } else {
+          const data: UserData = await response.json();
+          setUserData(data);
+          setStatusMessage(null);
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setStatusMessage("Error loading player data. Please try again later.");
+        setUserData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const storedId = localStorage.getItem("user_id");
+    if (storedId) {
+      fetchUserData(storedId);
+    } else {
+      setUserData(null);
+      setStatusMessage(
+        "Invalid User: No player ID found. Please login via the given URL (e.g., /login?id=YOUR_DISCORD_ID)."
+      );
+      setLoading(false);
+    }
+  }, []);
+
+  const MAX_BADGES_TO_DISPLAY = 8;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Navigation Bar */}
-        <nav className="bg-white p-4 rounded-lg shadow-md mb-8 flex justify-center space-x-6">
-          <Link href="/shop" className="text-blue-600 hover:text-blue-800 font-semibold text-lg">
-            Shop
-          </Link>
-          <Link href="/tutor" className="text-blue-600 hover:text-blue-800 font-semibold text-lg">
-            Trainer
-          </Link>
-          <Link href="/bag" className="text-blue-600 hover:text-blue-800 font-semibold text-lg">
-            Beutel
-          </Link>
-          <Link href="/pokedex" className="text-blue-600 hover:text-blue-800 font-semibold text-lg">
-            Pokédex
-          </Link>
-        </nav>
+    <div className="min-h-screen bg-gray-900 text-gray-100 p-8 flex flex-col items-center justify-center">
+      <div className="max-w-xl mx-auto bg-gray-800 p-10 rounded-lg shadow-xl text-center border border-gray-700">
+        {loading && (
+          <p className="text-xl text-gray-400 mb-6 font-semibold">
+            {statusMessage}
+          </p>
+        )}
+        {!loading && statusMessage && !userData && (
+          <p className="text-xl text-red-400 mb-6 font-semibold">
+            {statusMessage}
+          </p>
+        )}
+        {userData && (
+          <>
+            <h1 className="text-5xl font-extrabold text-blue-500 mb-6 tracking-wider">
+              {userData.name}'s Profile
+            </h1>
+            <div className="flex flex-col items-center justify-center mb-6">
+              {userData.sprite && (
+                <img
+                  src={userData.sprite}
+                  alt={`${userData.name}'s trainer sprite`}
+                  className="w-48 h-48 rounded-full border-4 border-blue-500 shadow-lg mb-4 object-contain"
+                />
+              )}
+              <p className="text-3xl font-semibold text-gray-50 mb-4">
+                {userData.name}
+              </p>
+            </div>
 
-        <ProfessorMessage
-          message={professorMessageData.message}
-          professorName={professorMessageData.professor}
-        />
+            <div className="text-center mb-6 border-t border-gray-700 pt-6">
+              <p className="text-gray-200 text-xl">
+                <span className="font-semibold text-blue-300">
+                  Poke Dollar:
+                </span>{" "}
+                {userData.money.toLocaleString("de-DE")} ₱
+              </p>
+              <p className="text-gray-200 text-xl">
+                <span className="font-semibold text-green-300">Delay:</span>{" "}
+                {userData.delay} days
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <UserProfile
-              userName={userData.name}
-              level={userData.level}
-              badgesCollected={userData.badges}
-              avatarSrc={userData.avatar}
-            />
+            <div className="mt-4 border-t border-gray-700 pt-6">
+              <h3 className="text-2xl font-bold text-yellow-300 mb-4">
+                Badges:
+              </h3>
+              <div className="grid grid-cols-4 gap-3 justify-items-center">
+                {Array.from({ length: MAX_BADGES_TO_DISPLAY }).map(
+                  (_, index) => {
+                    const badgeNumber = index + 1;
+                    const badgeSrc =
+                      badgeNumber <= userData.badges
+                        ? `/badges/badge${badgeNumber}.png`
+                        : `/badges/empty.png`;
+                    return (
+                      <img
+                        key={index}
+                        src={badgeSrc}
+                        alt={`Badge ${badgeNumber}`}
+                        className="w-16 h-16 object-contain"
+                      />
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {userData && (
+          <div className="space-y-4 mt-8">
+            <Link
+              href="/pokedex"
+              className="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
+            >
+              Go to Pokédex
+            </Link>
           </div>
-
-          <div className="md:col-span-2">
-            <LeadPokemon
-              name={leadPokemonData.name}
-              level={leadPokemonData.level}
-              hp={leadPokemonData.hp}
-              maxHp={leadPokemonData.maxHp}
-              spriteSrc={leadPokemonData.sprite}
-              status={leadPokemonData.status}
-            />
-
-            <BattleButton onClick={handleBattleClick} />
-
-            <ChallengeTeam pokemonList={challengeTeamData} />
-
-            {/* You could remove the small BagOverview from here now if the dedicated Bag page is sufficient */}
-            {/* <BagOverview items={bagItemsData} tms={bagTmsData} /> */}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
