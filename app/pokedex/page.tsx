@@ -1,4 +1,3 @@
-// app/pokedex/page.tsx
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
@@ -9,7 +8,7 @@ import { Generations } from "@pkmn/data";
 import { Dex } from "@pkmn/dex";
 
 const gens = new Generations(Dex);
-const selectedGen = gens.get(7); // Using Generation 7 data as requested
+const selectedGen = gens.get(7);
 
 interface PokedexEntry {
   id: number;
@@ -232,7 +231,6 @@ export default function PokedexPage() {
           &larr; Back to Home
         </Link>
 
-        {/* --- Filter Options --- */}
         <div className="flex flex-wrap items-center gap-4 mb-8 p-4 bg-gray-700 rounded-md shadow-inner">
           <input
             type="text"
@@ -276,7 +274,6 @@ export default function PokedexPage() {
             ))}
           </select>
         </div>
-        {/* --- End Filter Options --- */}
         <hr className="border-red-500 mb-6" />
 
         {loading && (
@@ -295,7 +292,6 @@ export default function PokedexPage() {
           </p>
         )}
 
-        {/* Pokedex Entries Grid */}
         {!loading && !error && filteredEntries.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {filteredEntries.map((entry) => (
