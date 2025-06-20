@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface UserData {
@@ -84,12 +85,15 @@ export default function Home() {
             <h1 className="text-5xl font-extrabold text-blue-500 mb-6 tracking-wider">
               Trainer {userData.name}
             </h1>
-            <div className="flex flex-col items-center justify-center mb-6">
+            <div className="flex flex-col items-center mb-6">
               {userData.sprite && (
-                <img
+                <Image
                   src={userData.sprite}
                   alt={`${userData.name}'s trainer sprite`}
+                  width={192}
+                  height={192}
                   className="w-48 h-48 rounded-full border-4 border-blue-500 shadow-lg mb-4 object-contain"
+                  unoptimized
                 />
               )}
               <p className="text-3xl font-semibold text-gray-50 mb-4">
@@ -123,11 +127,14 @@ export default function Home() {
                         ? `/badges/badge${badgeNumber}.png`
                         : `/badges/empty.png`;
                     return (
-                      <img
+                      <Image
                         key={index}
                         src={badgeSrc}
                         alt={`Badge ${badgeNumber}`}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 object-contain"
+                        unoptimized
                       />
                     );
                   }

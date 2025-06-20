@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { Generations } from "@pkmn/data";
 import { Dex } from "@pkmn/dex";
@@ -146,7 +147,10 @@ export default function PokedexPage() {
             continue;
           }
 
-          const spriteId = backendEntry.name.toLowerCase().replace('%', '').replace('dawn-wings', 'dawnwings');
+          const spriteId = backendEntry.name
+            .toLowerCase()
+            .replace("%", "")
+            .replace("dawn-wings", "dawnwings");
 
           const spriteUrl = backendEntry.shiny
             ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
@@ -304,56 +308,44 @@ export default function PokedexPage() {
                 }`}
                 title={!entry.caught ? "Not yet caught" : ""}
               >
-                {!entry.caught ? (
-                  <>
-                    <div className="w-24 h-24 mb-2 flex items-center justify-center text-gray-500 text-5xl font-bold">
-                      ?
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-400">?????</h2>
-                    <div className="flex space-x-2 mt-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-gray-500">
-                        ???
-                      </span>
-                      {entry.type2 && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-gray-500">
-                          ???
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <img
-                      src={entry.spriteUrl}
-                      alt={entry.name + (entry.shiny ? " ⭐" : "")}
-                      className="w-28 h-28 mb-2 object-contain"
-                    />
-                    <h2 className="text-xl font-bold text-gray-50">
-                      {entry.name}{" "}
-                      {entry.shiny && (
-                        <span className="text-yellow-400 text-lg">⭐</span>
-                      )}
-                    </h2>
-                    <div className="flex space-x-2 mt-2">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
-                          entry.type1
-                        )}`}
-                      >
-                        {entry.type1}
-                      </span>
-                      {entry.type2 && (
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
-                            entry.type2
-                          )}`}
-                        >
-                          {entry.type2}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
+                <Image
+                  src={entry.spriteUrl}
+                  alt={entry.name + (entry.shiny ? " ⭐" : "")}
+                  width={112}
+                  height={112}
+                  className={`w-28 h-28 mb-2 object-contain ${
+                    !entry.caught ? "filter brightness-0" : ""
+                  }`} // Black out if not caught
+                  unoptimized
+                />
+                <h2
+                  className={`text-xl font-bold ${
+                    !entry.caught ? "text-gray-400 blur-sm" : "text-gray-50"
+                  }`} // Blur and grey out name
+                >
+                  {entry.name}{" "}
+                  {entry.shiny && (
+                    <span className="text-yellow-400 text-lg">⭐</span>
+                  )}
+                </h2>
+                <div className="flex space-x-2 mt-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
+                      entry.type1
+                    )} ${!entry.caught ? "blur-sm" : ""}`} // Blur type1
+                  >
+                    {entry.type1}
+                  </span>
+                  {entry.type2 && (
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
+                        entry.type2
+                      )} ${!entry.caught ? "blur-sm" : ""}`} // Blur type2
+                    >
+                      {entry.type2}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>

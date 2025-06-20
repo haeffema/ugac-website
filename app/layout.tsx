@@ -1,5 +1,4 @@
-// app/layout.tsx (Example)
-import './globals.css'; // Your global CSS imports
+import "./globals.css";
 
 interface RootLayoutProps {
   children: React.ReactNode;
