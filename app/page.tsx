@@ -82,7 +82,7 @@ export default function Home() {
         {userData && (
           <>
             <h1 className="text-5xl font-extrabold text-blue-500 mb-6 tracking-wider">
-              {userData.name}'s Profile
+              Trainer {userData.name}
             </h1>
             <div className="flex flex-col items-center justify-center mb-6">
               {userData.sprite && (
