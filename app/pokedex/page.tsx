@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Generations } from "@pkmn/data";
 import { Dex } from "@pkmn/dex";
@@ -10,7 +11,6 @@ import { Dex } from "@pkmn/dex";
 const gens = new Generations(Dex);
 const selectedGen = gens.get(7); // Using Generation 7 data as requested
 
-// Define the structure for a Pokedex entry
 interface PokedexEntry {
   id: number;
   name: string;
@@ -18,18 +18,15 @@ interface PokedexEntry {
   type2?: string;
   spriteUrl: string;
   caught: boolean;
-  shiny: boolean; // Shiny property remains
-  moves: string[];
+  shiny: boolean;
 }
 
-// Interface for the simulated backend response
 interface BackendPokemonStatus {
   name: string;
   caught: boolean;
   shiny: boolean;
 }
 
-// Helper to get Tailwind color for Pokémon types
 const getTypeColor = (type: string) => {
   switch (type.toLowerCase()) {
     case "normal":
@@ -73,9 +70,8 @@ const getTypeColor = (type: string) => {
   }
 };
 
-// List of all common Pokémon types for the dropdown filter
 const pokemonTypes = [
-  "All", // Option to show all types
+  "All",
   "Normal",
   "Fire",
   "Water",
@@ -100,46 +96,42 @@ export default function PokedexPage() {
   const [pokedexEntries, setPokedexEntries] = useState<PokedexEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCaught, setFilterCaught] = useState<boolean>(false);
-  const [filterShiny, setFilterShiny] = useState<boolean>(false); // State for shiny filter
-  const [selectedType, setSelectedType] = useState<string>("All"); // State for type filter
+  const [filterShiny, setFilterShiny] = useState<boolean>(false);
+  const [selectedType, setSelectedType] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPokemonId, setSelectedPokemonId] = useState<number | null>(
-    null
-  );
+
+  const router = useRouter();
 
   useEffect(() => {
     const loadPokedexData = async () => {
+      setLoading(true);
+      setError(null);
+
+      const userId = localStorage.getItem("user_id");
+
+      if (!userId) {
+        setError(
+          "User ID not found. Please go back to the home page and login."
+        );
+        setLoading(false);
+        return;
+      }
+
       try {
-        setLoading(true);
-        setError(null);
+        const response = await fetch(`/api/backend/pokedex/${userId}`);
+        console.log("Pokedex Backend Fetch response:", response);
 
-        // --- SIMULATED BACKEND FETCH START ---
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Pokedex data not found for this user.");
+          }
+          throw new Error(
+            `Failed to fetch Pokedex data: ${response.statusText}`
+          );
+        }
 
-        const backendRawData: BackendPokemonStatus[] = [
-          { name: "Venusaur", caught: true, shiny: false },
-          { name: "Charizard", caught: true, shiny: true }, // Shiny!
-          { name: "Blastoise", caught: true, shiny: false },
-          { name: "Pikachu", caught: true, shiny: true }, // Shiny!
-          { name: "Snorlax", caught: true, shiny: false },
-          { name: "Muk-Alola", caught: false, shiny: false },
-          { name: "Lucario", caught: true, shiny: false },
-          { name: "Zoroark", caught: false, shiny: false },
-          { name: "Tapu Koko", caught: true, shiny: true }, // Shiny Gen 7 legendary!
-          { name: "Greninja", caught: true, shiny: false },
-          { name: "Decidueye", caught: true, shiny: false },
-          { name: "Arceus", caught: true, shiny: false },
-          { name: "Pichu", caught: false, shiny: true },
-          { name: "Eevee", caught: true, shiny: false },
-          { name: "Gengar", caught: true, shiny: true },
-          { name: "Mewtwo", caught: false, shiny: false },
-          { name: "Volcarona", caught: true, shiny: false },
-          { name: "Kommo-o", caught: true, shiny: true },
-          { name: "Jigglypuff", caught: false, shiny: false },
-          { name: "Machamp", caught: true, shiny: false },
-        ];
-        // --- SIMULATED BACKEND FETCH END ---
+        const backendRawData: BackendPokemonStatus[] = await response.json();
 
         const pokemonData: PokedexEntry[] = [];
 
@@ -155,30 +147,18 @@ export default function PokedexPage() {
             continue;
           }
 
+          const spriteId = backendEntry.name.toLowerCase().replace('%', '').replace('dawn-wings', 'dawnwings');
+
+          const spriteUrl = backendEntry.shiny
+            ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
+            : `https://play.pokemonshowdown.com/sprites/home/${spriteId}.png`;
+
           const id = species.num;
           const caught = backendEntry.caught;
           const shiny = backendEntry.shiny;
 
           const type1 = species.types[0];
           const type2 = species.types[1] || undefined;
-
-          const spriteBaseName = species.spriteid || species.id;
-          const spriteUrl = shiny
-            ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteBaseName}.png`
-            : `https://play.pokemonshowdown.com/sprites/home/${spriteBaseName}.png`;
-
-          const moves: string[] = [];
-          const learnset = selectedGen.learnsets.get(species.id);
-
-          if (learnset && learnset.learnset) {
-            const learnableMoves = Object.keys(learnset.learnset);
-            for (let i = 0; i < Math.min(5, learnableMoves.length); i++) {
-              const moveName = selectedGen.moves.get(learnableMoves[i])?.name;
-              if (moveName) {
-                moves.push(moveName);
-              }
-            }
-          }
 
           pokemonData.push({
             id: id,
@@ -188,7 +168,6 @@ export default function PokedexPage() {
             spriteUrl: spriteUrl,
             caught: caught,
             shiny: shiny,
-            moves: moves,
           });
         }
 
@@ -196,7 +175,7 @@ export default function PokedexPage() {
       } catch (err) {
         if (err instanceof Error) {
           setError(
-            `Failed to load Pokémon data: ${err.message}. Make sure @pkmn/data and @pkmn/dex are installed correctly.`
+            `Failed to load Pokémon data: ${err.message}. Please try refreshing or checking your login status.`
           );
         } else {
           setError("An unknown error occurred while loading Pokémon data.");
@@ -207,7 +186,7 @@ export default function PokedexPage() {
     };
 
     loadPokedexData();
-  }, []);
+  }, [router]);
 
   const filteredEntries = useMemo(() => {
     let currentFiltered = pokedexEntries;
@@ -222,7 +201,6 @@ export default function PokedexPage() {
       currentFiltered = currentFiltered.filter((entry) => entry.caught);
     }
 
-    // Filter by shiny status
     if (filterShiny) {
       currentFiltered = currentFiltered.filter((entry) => entry.shiny);
     }
@@ -238,10 +216,6 @@ export default function PokedexPage() {
 
     return currentFiltered.sort((a, b) => a.id - b.id);
   }, [pokedexEntries, searchTerm, filterCaught, filterShiny, selectedType]);
-
-  const handlePokemonClick = (id: number) => {
-    setSelectedPokemonId(selectedPokemonId === id ? null : id);
-  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
@@ -268,7 +242,6 @@ export default function PokedexPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          {/* Caught Filter Button */}
           <button
             onClick={() => setFilterCaught(!filterCaught)}
             className={`px-6 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md ${
@@ -280,19 +253,17 @@ export default function PokedexPage() {
             {"Caught"}
           </button>
 
-          {/* Shiny Filter Button (now same style as Caught) */}
           <button
             onClick={() => setFilterShiny(!filterShiny)}
             className={`px-6 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md ${
               filterShiny
-                ? "bg-yellow-600 text-white hover:bg-yellow-700" // Shiny specific color
+                ? "bg-yellow-600 text-white hover:bg-yellow-700"
                 : "bg-gray-600 text-gray-200 hover:bg-gray-500"
             }`}
           >
             {"Shiny"}
           </button>
 
-          {/* Type Filter Dropdown */}
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
@@ -310,7 +281,7 @@ export default function PokedexPage() {
 
         {loading && (
           <p className="text-center text-gray-400 mt-8">
-            Loading Pokémon data from local library...
+            Loading Pokémon data from your journey...
           </p>
         )}
 
@@ -329,7 +300,7 @@ export default function PokedexPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {filteredEntries.map((entry) => (
               <div
-                key={entry.id}
+                key={entry.name}
                 className={`border border-gray-700 p-4 rounded-lg shadow-lg flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 ${
                   !entry.caught
                     ? "bg-gray-900 text-gray-400 grayscale blur-sm opacity-90"
@@ -342,9 +313,7 @@ export default function PokedexPage() {
                     <div className="w-24 h-24 mb-2 flex items-center justify-center text-gray-500 text-5xl font-bold">
                       ?
                     </div>
-                    <h2 className="text-xl font-bold text-gray-400">
-                      #{String(entry.id).padStart(3, "0")} ?????
-                    </h2>
+                    <h2 className="text-xl font-bold text-gray-400">?????</h2>
                     <div className="flex space-x-2 mt-2">
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-gray-500">
                         ???
@@ -364,8 +333,8 @@ export default function PokedexPage() {
                       className="w-28 h-28 mb-2 object-contain"
                     />
                     <h2 className="text-xl font-bold text-gray-50">
-                      #{String(entry.id).padStart(3, "0")} {entry.name}{" "}
-                      {entry.shiny && ( // Changed to a star symbol
+                      {entry.name}{" "}
+                      {entry.shiny && (
                         <span className="text-yellow-400 text-lg">⭐</span>
                       )}
                     </h2>
@@ -387,29 +356,6 @@ export default function PokedexPage() {
                         </span>
                       )}
                     </div>
-
-                    <button
-                      onClick={() => handlePokemonClick(entry.id)}
-                      className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
-                    >
-                      {selectedPokemonId === entry.id
-                        ? "Hide Moves"
-                        : "Show Moves"}
-                    </button>
-                    {selectedPokemonId === entry.id &&
-                      entry.moves &&
-                      entry.moves.length > 0 && (
-                        <div className="mt-2 text-left w-full max-h-24 overflow-y-auto border-t border-gray-600 pt-2 scrollbar-hide">
-                          <h3 className="font-semibold text-gray-200 text-sm mb-1">
-                            Moves:
-                          </h3>
-                          <ul className="list-disc list-inside text-gray-300 text-xs">
-                            {entry.moves.map((moveName, index) => (
-                              <li key={index}>{moveName}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
                   </>
                 )}
               </div>
