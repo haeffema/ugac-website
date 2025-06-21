@@ -253,7 +253,7 @@ export default function PokedexPage() {
 
     if (searchTerm) {
       currentFiltered = currentFiltered.filter((entry) =>
-        entry.name.toLowerCase().includes(searchTerm.toLowerCase())
+        entry.name.toLowerCase().startsWith(searchTerm.toLowerCase()) && entry.caught
       );
     }
 
