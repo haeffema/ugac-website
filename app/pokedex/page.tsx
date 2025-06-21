@@ -433,17 +433,14 @@ export default function PokedexPage() {
       </div>
 
       {showSetPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-          <div className="bg-gray-800 rounded-lg shadow-2xl p-8 max-w-2xl w-full relative text-gray-50 font-mono">
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-red-400 text-2xl cursor-pointer"
-              onClick={handleClosePopup}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+          onClick={handleClosePopup}
+        >
+          <div
+            className="bg-gray-800 rounded-lg shadow-2xl p-8 max-w-2xl w-full relative text-gray-50 font-mono border border-gray-700"
+            onClick={(e) => e.stopPropagation()}
+          >
             {selectedPokemon && selectedPokemon.set ? (
               <div className="flex flex-col md:flex-row gap-8">
                 {/* Left: Images */}
