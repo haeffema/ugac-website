@@ -207,7 +207,11 @@ export default function PokedexPage() {
             .toLowerCase()
             .replace("%", "")
             .replace("dawn-wings", "dawnwings")
-            .replace("ho-oh", "hooh").replace('mr. ', 'mr').replace('’', ''); 
+            .replace("ho-oh", "hooh")
+            .replace("mr. ", "mr")
+            .replace("’", "")
+            .replace("pa'u", "pau")
+            .replace("pom-pom", "pompom");
 
           const spriteUrl = backendEntry.shiny
             ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
