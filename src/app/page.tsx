@@ -1,19 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-
-interface UserData {
-  discordId: string;
-  name: string;
-  badges: number;
-  money: number;
-  encounters: number;
-  newEncounters: number;
-  sprite: string;
-  delay: number;
-}
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { UserData } from '../types/user';
 
 export default function Home() {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -23,18 +12,18 @@ export default function Home() {
   useEffect(() => {
     const fetchUserData = async (id: string) => {
       setLoading(true);
-      setStatusMessage("Loading player data...");
+      setStatusMessage('Loading player data...');
       try {
         const response = await fetch(`/api/backend/${id}`);
 
-        console.log("Fetch response:", response);
+        console.log('Fetch response:', response);
 
         if (response.status === 400) {
           setStatusMessage(
-            "Invalid User: Player data not found. Please ensure you are logged in via the correct URL."
+            'Invalid User: Player data not found. Please ensure you are logged in via the correct URL.'
           );
           setUserData(null);
-          localStorage.removeItem("user_id");
+          localStorage.removeItem('user_id');
         } else if (!response.ok) {
           throw new Error(
             `Failed to fetch player data: ${response.statusText}`
@@ -45,21 +34,21 @@ export default function Home() {
           setStatusMessage(null);
         }
       } catch (err) {
-        console.error("Error fetching user data:", err);
-        setStatusMessage("Error loading player data. Please try again later.");
+        console.error('Error fetching user data:', err);
+        setStatusMessage('Error loading player data. Please try again later.');
         setUserData(null);
       } finally {
         setLoading(false);
       }
     };
 
-    const storedId = localStorage.getItem("user_id");
+    const storedId = localStorage.getItem('user_id');
     if (storedId) {
       fetchUserData(storedId);
     } else {
       setUserData(null);
       setStatusMessage(
-        "Invalid User: No player ID found. Please login via the given URL."
+        'Invalid User: No player ID found. Please login via the given URL.'
       );
       setLoading(false);
     }
@@ -105,11 +94,11 @@ export default function Home() {
               <p className="text-gray-200 text-xl">
                 <span className="font-semibold text-blue-300">
                   Poke Dollar:
-                </span>{" "}
-                {userData.money.toLocaleString("de-DE")} ₱
+                </span>{' '}
+                {userData.money.toLocaleString('de-DE')} ₱
               </p>
               <p className="text-gray-200 text-xl">
-                <span className="font-semibold text-green-300">Delay:</span>{" "}
+                <span className="font-semibold text-green-300">Delay:</span>{' '}
                 {userData.delay} days
               </p>
             </div>
@@ -142,17 +131,6 @@ export default function Home() {
               </div>
             </div>
           </>
-        )}
-
-        {userData && (
-          <div className="space-y-4 mt-8">
-            <Link
-              href="/pokedex"
-              className="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
-            >
-              Go to Pokédex
-            </Link>
-          </div>
         )}
       </div>
     </div>

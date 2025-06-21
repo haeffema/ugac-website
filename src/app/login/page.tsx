@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [message, setMessage] = useState("Attempting to log you in...");
+  const [message, setMessage] = useState('Attempting to log you in...');
 
   useEffect(() => {
-    const id = searchParams.get("id");
+    const id = searchParams.get('id');
 
     if (id) {
-      localStorage.setItem("user_id", id);
+      localStorage.setItem('user_id', id);
       console.log(`User ID ${id} stored in localStorage.`);
-      setMessage("Login successful! Redirecting to home page...");
+      setMessage('Login successful! Redirecting to home page...');
 
       const timer = setTimeout(() => {
-        router.push("/");
+        router.push('/');
       }, 1500);
 
       return () => clearTimeout(timer);
     } else {
       console.warn("No 'id' parameter found in URL. Redirecting to home page.");
-      setMessage("No user ID found. Redirecting to home page...");
+      setMessage('No user ID found. Redirecting to home page...');
       const timer = setTimeout(() => {
-        router.push("/");
+        router.push('/');
       }, 2000);
 
       return () => clearTimeout(timer);

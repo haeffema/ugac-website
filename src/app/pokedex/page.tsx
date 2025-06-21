@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-import { Generations } from "@pkmn/data";
-import { Dex } from "@pkmn/dex";
+import { Generations } from '@pkmn/data';
+import { Dex } from '@pkmn/dex';
 
 const gens = new Generations(Dex);
 const selectedGen = gens.get(7);
@@ -39,67 +39,67 @@ interface PokemonSet {
 
 const getTypeColor = (type: string) => {
   switch (type.toLowerCase()) {
-    case "normal":
-      return "bg-gray-500";
-    case "fire":
-      return "bg-red-600";
-    case "water":
-      return "bg-blue-600";
-    case "grass":
-      return "bg-green-600";
-    case "electric":
-      return "bg-yellow-400";
-    case "ice":
-      return "bg-blue-300";
-    case "fighting":
-      return "bg-red-700";
-    case "poison":
-      return "bg-purple-600";
-    case "ground":
-      return "bg-yellow-700";
-    case "flying":
-      return "bg-indigo-400";
-    case "psychic":
-      return "bg-pink-600";
-    case "bug":
-      return "bg-lime-600";
-    case "rock":
-      return "bg-amber-800";
-    case "ghost":
-      return "bg-purple-800";
-    case "dragon":
-      return "bg-indigo-700";
-    case "steel":
-      return "bg-gray-600";
-    case "fairy":
-      return "bg-pink-400";
-    case "dark":
-      return "bg-gray-900";
+    case 'normal':
+      return 'bg-gray-500';
+    case 'fire':
+      return 'bg-red-600';
+    case 'water':
+      return 'bg-blue-600';
+    case 'grass':
+      return 'bg-green-600';
+    case 'electric':
+      return 'bg-yellow-400';
+    case 'ice':
+      return 'bg-blue-300';
+    case 'fighting':
+      return 'bg-red-700';
+    case 'poison':
+      return 'bg-purple-600';
+    case 'ground':
+      return 'bg-yellow-700';
+    case 'flying':
+      return 'bg-indigo-400';
+    case 'psychic':
+      return 'bg-pink-600';
+    case 'bug':
+      return 'bg-lime-600';
+    case 'rock':
+      return 'bg-amber-800';
+    case 'ghost':
+      return 'bg-purple-800';
+    case 'dragon':
+      return 'bg-indigo-700';
+    case 'steel':
+      return 'bg-gray-600';
+    case 'fairy':
+      return 'bg-pink-400';
+    case 'dark':
+      return 'bg-gray-900';
     default:
-      return "bg-gray-700";
+      return 'bg-gray-700';
   }
 };
 
 const pokemonTypes = [
-  "All",
-  "Normal",
-  "Fire",
-  "Water",
-  "Grass",
-  "Electric",
-  "Ice",
-  "Fighting",
-  "Poison",
-  "Ground",
-  "Flying",
-  "Psychic",
-  "Bug",
-  "Rock",
-  "Ghost",
-  "Dragon",
-  "Steel",
-  "Fairy",
-  "Dark",
+  'All',
+  'Normal',
+  'Fire',
+  'Water',
+  'Grass',
+  'Electric',
+  'Ice',
+  'Fighting',
+  'Poison',
+  'Ground',
+  'Flying',
+  'Psychic',
+  'Bug',
+  'Rock',
+  'Ghost',
+  'Dragon',
+  'Steel',
+  'Fairy',
+  'Dark',
 ];
 
 const formatAndFilterStats = (
@@ -107,12 +107,12 @@ const formatAndFilterStats = (
   defaultValue: number
 ) => {
   const statMap = {
-    hp: "HP",
-    atk: "Atk",
-    def: "Def",
-    spa: "SpA",
-    spd: "SpD",
-    spe: "Spe",
+    hp: 'HP',
+    atk: 'Atk',
+    def: 'Def',
+    spa: 'SpA',
+    spd: 'SpD',
+    spe: 'Spe',
   };
 
   // Filter out stats that match the defaultValue (0 for EVs, 31 for IVs)
@@ -129,15 +129,15 @@ const formatAndFilterStats = (
       ([stat, val]) =>
         `${val} ${(statMap as Record<string, string>)[stat] || stat}`
     )
-    .join(" / ");
+    .join(' / ');
 };
 
 export default function PokedexPage() {
   const [pokedexEntries, setPokedexEntries] = useState<PokedexEntry[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterCaught, setFilterCaught] = useState<boolean>(false);
   const [filterShiny, setFilterShiny] = useState<boolean>(false);
-  const [selectedType, setSelectedType] = useState<string>("All");
+  const [selectedType, setSelectedType] = useState<string>('All');
   const [showSetPopup, setShowSetPopup] = useState<boolean>(false);
   const [selectedPokemon, setSelectedPokemon] = useState<PokedexEntry | null>(
     null
@@ -149,13 +149,13 @@ export default function PokedexPage() {
 
   useEffect(() => {
     if (showSetPopup) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [showSetPopup]);
 
@@ -164,11 +164,11 @@ export default function PokedexPage() {
       setLoading(true);
       setError(null);
 
-      const userId = localStorage.getItem("user_id");
+      const userId = localStorage.getItem('user_id');
 
       if (!userId) {
         setError(
-          "User ID not found. Please go back to the home page and login."
+          'User ID not found. Please go back to the home page and login.'
         );
         setLoading(false);
         return;
@@ -176,11 +176,11 @@ export default function PokedexPage() {
 
       try {
         const response = await fetch(`/api/backend/pokedex/${userId}`);
-        console.log("Pokedex Backend Fetch response:", response);
+        console.log('Pokedex Backend Fetch response:', response);
 
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error("Pokedex data not found for this user.");
+            throw new Error('Pokedex data not found for this user.');
           }
           throw new Error(
             `Failed to fetch Pokedex data: ${response.statusText}`
@@ -205,13 +205,15 @@ export default function PokedexPage() {
 
           const spriteId = backendEntry.name
             .toLowerCase()
-            .replace("%", "")
-            .replace("dawn-wings", "dawnwings")
-            .replace("ho-oh", "hooh")
-            .replace("mr. ", "mr")
-            .replace("’", "")
-            .replace("pa'u", "pau")
-            .replace("pom-pom", "pompom");
+            .replace('%', '')
+            .replace('dawn-wings', 'dawnwings')
+            .replace('dusk-mane', 'duskmane')
+            .replace('tapu ', 'tapu')
+            .replace('ho-oh', 'hooh')
+            .replace('mr. ', 'mr')
+            .replace('’', '')
+            .replace("pa'u", 'pau')
+            .replace('pom-pom', 'pompom');
 
           const spriteUrl = backendEntry.shiny
             ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
@@ -243,7 +245,7 @@ export default function PokedexPage() {
             `Failed to load Pokémon data: ${err.message}. Please try refreshing or checking your login status.`
           );
         } else {
-          setError("An unknown error occurred while loading Pokémon data.");
+          setError('An unknown error occurred while loading Pokémon data.');
         }
       } finally {
         setLoading(false);
@@ -272,7 +274,7 @@ export default function PokedexPage() {
       currentFiltered = currentFiltered.filter((entry) => entry.shiny);
     }
 
-    if (selectedType !== "All") {
+    if (selectedType !== 'All') {
       currentFiltered = currentFiltered.filter(
         (entry) =>
           entry.type1.toLowerCase() === selectedType.toLowerCase() ||
@@ -307,10 +309,10 @@ export default function PokedexPage() {
 
         <div className="flex flex-wrap items-center gap-4 mb-8 p-4 bg-gray-700 rounded-md shadow-inner">
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push('/')}
             className="px-6 py-3 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 shadow-md cursor-pointer"
           >
-            {"Home"}
+            {'Home'}
           </button>
 
           <input
@@ -325,22 +327,22 @@ export default function PokedexPage() {
             onClick={() => setFilterCaught(!filterCaught)}
             className={`px-6 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md cursor-pointer ${
               filterCaught
-                ? "bg-green-600 text-white hover:bg-green-700"
-                : "bg-gray-600 text-gray-200 hover:bg-gray-500"
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
             }`}
           >
-            {"Caught"}
+            {'Caught'}
           </button>
 
           <button
             onClick={() => setFilterShiny(!filterShiny)}
             className={`px-6 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md cursor-pointer   ${
               filterShiny
-                ? "bg-yellow-600 text-white hover:bg-yellow-700"
-                : "bg-gray-600 text-gray-200 hover:bg-gray-500"
+                ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
             }`}
           >
-            {"Shiny"}
+            {'Shiny'}
           </button>
 
           <select
@@ -379,31 +381,31 @@ export default function PokedexPage() {
               <div
                 key={entry.name}
                 className={`border border-gray-700 p-4 rounded-lg shadow-lg flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 ${
-                  entry.caught ? "cursor-pointer" : "cursor-not-allowed"
+                  entry.caught ? 'cursor-pointer' : 'cursor-not-allowed'
                 } ${
                   !entry.caught
-                    ? "bg-gray-900 text-gray-400 grayscale blur-sm opacity-90"
-                    : "bg-gray-700 text-gray-100"
+                    ? 'bg-gray-900 text-gray-400 grayscale blur-sm opacity-90'
+                    : 'bg-gray-700 text-gray-100'
                 }`}
-                title={!entry.caught ? "Not yet caught" : ""}
+                title={!entry.caught ? 'Not yet caught' : ''}
                 onClick={() => handlePokemonClick(entry)}
               >
                 <Image
                   src={entry.spriteUrl}
-                  alt={entry.name + (entry.shiny ? " ⭐" : "")}
+                  alt={entry.name + (entry.shiny ? ' ⭐' : '')}
                   width={112}
                   height={112}
                   className={`w-28 h-28 mb-2 object-contain ${
-                    !entry.caught ? "filter brightness-0" : ""
+                    !entry.caught ? 'filter brightness-0' : ''
                   }`} // Black out if not caught
                   unoptimized
                 />
                 <h2
                   className={`text-xl font-bold ${
-                    !entry.caught ? "text-gray-400 blur-sm" : "text-gray-50"
+                    !entry.caught ? 'text-gray-400 blur-sm' : 'text-gray-50'
                   }`} // Blur and grey out name
                 >
-                  {entry.name}{" "}
+                  {entry.name}{' '}
                   {entry.shiny && (
                     <span className="text-yellow-400 text-lg">⭐</span>
                   )}
@@ -412,7 +414,7 @@ export default function PokedexPage() {
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
                       entry.type1
-                    )} ${!entry.caught ? "blur-sm" : ""}`} // Blur type1
+                    )} ${!entry.caught ? 'blur-sm' : ''}`} // Blur type1
                   >
                     {entry.type1}
                   </span>
@@ -420,7 +422,7 @@ export default function PokedexPage() {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
                         entry.type2
-                      )} ${!entry.caught ? "blur-sm" : ""}`} // Blur type2
+                      )} ${!entry.caught ? 'blur-sm' : ''}`} // Blur type2
                     >
                       {entry.type2}
                     </span>
@@ -455,14 +457,14 @@ export default function PokedexPage() {
                       unoptimized
                     />
                     {selectedPokemon.set.item &&
-                      selectedPokemon.set.item !== "" && (
+                      selectedPokemon.set.item !== '' && (
                         <Image
                           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${selectedPokemon.set.item
                             .toLowerCase()
-                            .replace(/ /g, "-")
-                            .replace(/'/g, "")
-                            .replace(/\./g, "")
-                            .replace(/é/g, "e")}.png`}
+                            .replace(/ /g, '-')
+                            .replace(/'/g, '')
+                            .replace(/\./g, '')
+                            .replace(/é/g, 'e')}.png`}
                           alt={selectedPokemon.set.item}
                           width={15}
                           height={15}
@@ -489,7 +491,7 @@ export default function PokedexPage() {
                                   moveData.type
                                 )}`}
                                 title={moveData.type}
-                                style={{ minWidth: 100, textAlign: "center" }}
+                                style={{ minWidth: 100, textAlign: 'center' }}
                               >
                                 {moveData.type}
                               </span>
@@ -515,7 +517,7 @@ export default function PokedexPage() {
                 <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
                   {selectedPokemon.name}
                   {selectedPokemon.set.item &&
-                    selectedPokemon.set.item !== "" && (
+                    selectedPokemon.set.item !== '' && (
                       <span className="text-lg font-normal text-gray-300">
                         @ {selectedPokemon.set.item}
                       </span>
@@ -523,12 +525,12 @@ export default function PokedexPage() {
                 </h2>
                 {/* Ability */}
                 <div>
-                  <span className="font-semibold">Ability:</span>{" "}
+                  <span className="font-semibold">Ability:</span>{' '}
                   {selectedPokemon.set.ability}
                 </div>
                 {/* Nature */}
                 <div>
-                  <span className="font-semibold">Nature:</span>{" "}
+                  <span className="font-semibold">Nature:</span>{' '}
                   {selectedPokemon.set.nature}
                 </div>
                 {/* EVs */}
@@ -540,7 +542,7 @@ export default function PokedexPage() {
                   return (
                     formattedEvs && (
                       <div>
-                        <span className="font-semibold">EVs:</span>{" "}
+                        <span className="font-semibold">EVs:</span>{' '}
                         {formattedEvs}
                       </div>
                     )
@@ -555,7 +557,7 @@ export default function PokedexPage() {
                   return (
                     formattedIvs && (
                       <div>
-                        <span className="font-semibold">IVs:</span>{" "}
+                        <span className="font-semibold">IVs:</span>{' '}
                         {formattedIvs}
                       </div>
                     )
