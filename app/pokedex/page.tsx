@@ -206,7 +206,8 @@ export default function PokedexPage() {
           const spriteId = backendEntry.name
             .toLowerCase()
             .replace("%", "")
-            .replace("dawn-wings", "dawnwings");
+            .replace("dawn-wings", "dawnwings")
+            .replace("ho-oh", "hooh").replace('mr. ', 'mr').replace('’', ''); 
 
           const spriteUrl = backendEntry.shiny
             ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
@@ -252,8 +253,10 @@ export default function PokedexPage() {
     let currentFiltered = pokedexEntries;
 
     if (searchTerm) {
-      currentFiltered = currentFiltered.filter((entry) =>
-        entry.name.toLowerCase().startsWith(searchTerm.toLowerCase()) && entry.caught
+      currentFiltered = currentFiltered.filter(
+        (entry) =>
+          entry.name.toLowerCase().startsWith(searchTerm.toLowerCase()) &&
+          entry.caught
       );
     }
 
