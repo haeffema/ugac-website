@@ -33,6 +33,7 @@ interface PokemonSet {
   item: string;
   nature: string;
   moves: string[];
+  shiny: boolean;
   evs: { [key: string]: number };
   ivs?: { [key: string]: number };
 }
@@ -461,7 +462,11 @@ export default function PokedexPage() {
                 <div className="flex flex-col items-center justify-start relative min-w-[210px]">
                   <div className="relative">
                     <Image
-                      src={selectedPokemon.spriteId}
+                      src={
+                        selectedPokemon.set.shiny
+                          ? `https://play.pokemonshowdown.com/sprites/home-shiny/${selectedPokemon.spriteId}.png`
+                          : `https://play.pokemonshowdown.com/sprites/home/${selectedPokemon.spriteId}.png`
+                      }
                       alt={selectedPokemon.name}
                       width={192}
                       height={192}
