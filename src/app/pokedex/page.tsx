@@ -376,7 +376,7 @@ export default function PokedexPage() {
         )}
 
         {!loading && !error && filteredEntries.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 select-none">
             {filteredEntries.map((entry) => (
               <div
                 key={entry.name}
@@ -397,15 +397,16 @@ export default function PokedexPage() {
                   height={112}
                   className={`w-28 h-28 mb-2 object-contain ${
                     !entry.caught ? 'filter brightness-0' : ''
-                  }`} // Black out if not caught
+                  }`}
                   unoptimized
+                  draggable={false}
                 />
                 <h2
                   className={`text-xl font-bold ${
                     !entry.caught ? 'text-gray-400 blur-sm' : 'text-gray-50'
                   }`} // Blur and grey out name
                 >
-                  {entry.name}{' '}
+                  {entry.caught ? entry.name : '???'}{' '}
                   {entry.shiny && (
                     <span className="text-yellow-400 text-lg">⭐</span>
                   )}
