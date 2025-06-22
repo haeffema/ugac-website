@@ -3,11 +3,12 @@
 import '../globals.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { HiHome, HiBookOpen } from 'react-icons/hi';
 import { RxBackpack } from 'react-icons/rx';
-
+import { Suspense } from 'react';
+import LoginRedirect from './components/LoginRedirect';
 import { useUserStore } from '../userStore';
 
 interface RootLayoutProps {
@@ -31,12 +32,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
     link.href === '/' ? pathname === '/' : pathname.startsWith(link.href)
   );
 
+  // @TODO: -> use to components
+
+  useEffect(() => {
+    const id = localStorage.getItem('user_id');
+    if (id) {
+      fetchCurrentUser(id);
+    } else {
+      router.push('/login');
+    }
+  }, [fetchCurrentUser, router]);
+
   useEffect(() => {
     if (!isLoading && !user && error) {
       console.log(
         'User data fetch failed or invalid user. Redirecting to /login (or similar).'
       );
-      router.push('/login');
     }
   }, [isLoading, user, error, router]);
 
@@ -44,6 +55,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
       <html lang="en">
         <body className="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen">
+          <Suspense fallback={null}>
+            <LoginRedirect />
+          </Suspense>
           <p className="text-xl">Loading player data...</p>
         </body>
       </html>
@@ -54,6 +68,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
       <html lang="en">
         <body className="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen">
+          <Suspense fallback={null}>
+            <LoginRedirect />
+          </Suspense>
           <p className="text-xl text-red-400">{error}</p>
         </body>
       </html>
@@ -64,6 +81,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
       <html lang="en">
         <body className="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen">
+          <Suspense fallback={null}>
+            <LoginRedirect />
+          </Suspense>
           <p>Redirecting...</p> {/* Or a simple loading spinner */}
         </body>
       </html>
@@ -73,6 +93,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className="bg-gray-900 text-gray-100 flex flex-col h-screen overflow-hidden">
+        <Suspense fallback={null}>
+          <LoginRedirect />
+        </Suspense>
         {/* Top Bar */}
         <header className="w-full bg-gray-800 shadow flex items-center px-6 py-3 justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
