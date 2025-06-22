@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { UserData } from '../types/user';
+import { User } from '../types';
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -29,7 +29,7 @@ export default function Home() {
             `Failed to fetch player data: ${response.statusText}`
           );
         } else {
-          const data: UserData = await response.json();
+          const data: User = await response.json();
           setUserData(data);
           setStatusMessage(null);
         }

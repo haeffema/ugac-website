@@ -302,19 +302,7 @@ export default function PokedexPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
       <div className="max-w-7xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-        <h1 className="text-5xl font-extrabold text-red-500 text-center mb-8 tracking-wider">
-          Pokédex
-        </h1>
-        <hr className="border-red-500 mb-6" />
-
         <div className="flex flex-wrap items-center gap-4 mb-8 p-4 bg-gray-700 rounded-md shadow-inner">
-          <button
-            onClick={() => router.push('/')}
-            className="px-6 py-3 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 shadow-md cursor-pointer"
-          >
-            {'Home'}
-          </button>
-
           <input
             type="text"
             placeholder="Search Pokémon..."
