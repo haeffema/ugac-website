@@ -15,7 +15,7 @@ interface PokedexEntry {
   name: string;
   type1: string;
   type2?: string;
-  spriteUrl: string;
+  spriteId: string;
   caught: boolean;
   shiny: boolean;
   set: PokemonSet | undefined;
@@ -115,13 +115,12 @@ const formatAndFilterStats = (
     spe: 'Spe',
   };
 
-  // Filter out stats that match the defaultValue (0 for EVs, 31 for IVs)
   const filteredStats = Object.entries(stats).filter(
     ([, val]) => val !== defaultValue
   );
 
   if (filteredStats.length === 0) {
-    return null; // Return null if all stats are default (i.e., all 0 EVs or all 31 IVs)
+    return null;
   }
 
   return filteredStats
@@ -153,7 +152,6 @@ export default function PokedexPage() {
     } else {
       document.body.style.overflow = '';
     }
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = '';
     };
@@ -215,10 +213,6 @@ export default function PokedexPage() {
             .replace("pa'u", 'pau')
             .replace('pom-pom', 'pompom');
 
-          const spriteUrl = backendEntry.shiny
-            ? `https://play.pokemonshowdown.com/sprites/home-shiny/${spriteId}.png`
-            : `https://play.pokemonshowdown.com/sprites/home/${spriteId}.png`;
-
           const id = species.num;
           const caught = backendEntry.caught;
           const shiny = backendEntry.shiny;
@@ -231,7 +225,7 @@ export default function PokedexPage() {
             name: species.name,
             type1: type1,
             type2: type2,
-            spriteUrl: spriteUrl,
+            spriteId: spriteId,
             caught: caught,
             shiny: shiny,
             set: backendEntry.set,
@@ -377,7 +371,11 @@ export default function PokedexPage() {
                     onClick={() => handlePokemonClick(entry)}
                   >
                     <Image
-                      src={entry.spriteUrl}
+                      src={
+                        filterShiny
+                          ? `https://play.pokemonshowdown.com/sprites/home-shiny/${entry.spriteId}.png`
+                          : `https://play.pokemonshowdown.com/sprites/home/${entry.spriteId}.png`
+                      }
                       alt={entry.name + (entry.shiny ? ' ⭐' : '')}
                       width={112}
                       height={112}
@@ -417,7 +415,7 @@ export default function PokedexPage() {
                     onClick={() => handlePokemonClick(entry)}
                   >
                     <Image
-                      src={entry.spriteUrl}
+                      src={`https://play.pokemonshowdown.com/sprites/home/${entry.spriteId}.png`}
                       alt={'???'}
                       width={112}
                       height={112}
@@ -463,7 +461,7 @@ export default function PokedexPage() {
                 <div className="flex flex-col items-center justify-start relative min-w-[210px]">
                   <div className="relative">
                     <Image
-                      src={selectedPokemon.spriteUrl}
+                      src={selectedPokemon.spriteId}
                       alt={selectedPokemon.name}
                       width={192}
                       height={192}

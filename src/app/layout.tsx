@@ -1,6 +1,6 @@
 'use client';
 
-import '../styles/globals.css';
+import '../globals.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { HiHome, HiBookOpen } from 'react-icons/hi';
 import { RxBackpack } from 'react-icons/rx';
 
-import { useUserStore } from '../store/userStore';
+import { useUserStore } from '../userStore';
 
 interface RootLayoutProps {
   children: React.ReactNode;
