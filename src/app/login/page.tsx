@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useUserStore } from '@/userStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,29 +11,26 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const [message, setMessage] = useState('Attempting to log you in...');
 
+  const { user, isLoading, error, fetchCurrentUser, clearUser } =
+    useUserStore();
+
   useEffect(() => {
     const id = searchParams.get('id');
 
-    if (id) {
-      localStorage.setItem('user_id', id);
-      console.log(`User ID ${id} stored in localStorage.`);
-      setMessage('Login successful! Redirecting to home page...');
-
-      const timer = setTimeout(() => {
-        router.push('/');
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    } else {
-      console.warn("No 'id' parameter found in URL. Redirecting to home page.");
-      setMessage('No user ID found. Redirecting to home page...');
-      const timer = setTimeout(() => {
-        router.push('/');
-      }, 2000);
-
-      return () => clearTimeout(timer);
+    if (!id) {
+      setMessage('No user ID provided. Redirecting to home page...');
+      return;
     }
-  }, [searchParams, router]);
+
+    fetchCurrentUser(id).then(() => {
+      if (user) {
+        setMessage('Login successful! Redirecting to home page...');
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      }
+    });
+  }, [searchParams, router, fetchCurrentUser, user]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-100 p-4">

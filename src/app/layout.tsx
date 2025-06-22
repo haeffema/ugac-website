@@ -32,20 +32,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
   );
 
   useEffect(() => {
-    if (!user && !isLoading && !error) {
-      const storedUserId = localStorage.getItem('user_id');
-      if (storedUserId) {
-        fetchCurrentUser(storedUserId);
-      } else {
-        console.log(
-          'No user_id found in localStorage. Redirecting to /login (or similar).'
-        );
-        router.push('/login');
-      }
-    }
-  }, [user, isLoading, error, fetchCurrentUser, router]);
-
-  useEffect(() => {
     if (!isLoading && !user && error) {
       console.log(
         'User data fetch failed or invalid user. Redirecting to /login (or similar).'
