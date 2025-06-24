@@ -212,7 +212,8 @@ export default function PokedexPage() {
             .replace('’', '')
             .replace("pa'u", 'pau')
             .replace('pom-pom', 'pompom')
-            .replace('o-o', 'oo');
+            .replace('o-o', 'oo')
+            .replace('n-z', 'nz');
 
           const id = species.num;
           const caught = backendEntry.caught;
