@@ -208,11 +208,11 @@ export default function PokedexPage() {
             .replace('dawn-wings', 'dawnwings')
             .replace('dusk-mane', 'duskmane')
             .replace('tapu ', 'tapu')
-            .replace('ho-oh', 'hooh')
             .replace('mr. ', 'mr')
             .replace('’', '')
             .replace("pa'u", 'pau')
-            .replace('pom-pom', 'pompom');
+            .replace('pom-pom', 'pompom')
+            .replace('o-o', 'oo');
 
           const id = species.num;
           const caught = backendEntry.caught;
