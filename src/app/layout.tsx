@@ -3,11 +3,10 @@
 import '../globals.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
 import { HiHome, HiBookOpen } from 'react-icons/hi';
 import { RxBackpack } from 'react-icons/rx';
-import { Suspense } from 'react';
 import LoginRedirect from './components/LoginRedirect';
 import { useUserStore } from '../userStore';
 
@@ -25,14 +24,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user, isLoading, error, fetchCurrentUser, clearUser } =
-    useUserStore();
+  const { user, isLoading, error, fetchCurrentUser } = useUserStore();
 
   const activeLink = sidebarLinks.find((link) =>
     link.href === '/' ? pathname === '/' : pathname.startsWith(link.href)
   );
-
-  // @TODO: -> use to components
 
   useEffect(() => {
     const id = localStorage.getItem('user_id');
@@ -92,7 +88,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en">
-      <body className="bg-gray-900 text-gray-100 flex flex-col h-screen overflow-hidden">
+      {/* Changed `flex-col h-screen` here */}
+      <body className="bg-gray-900 text-gray-100 flex flex-col h-screen">
         <Suspense fallback={null}>
           <LoginRedirect />
         </Suspense>
@@ -119,10 +116,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </div>
           )}
         </header>
-        {/* Layout with Sidebar */}
-        <div className="flex min-h-screen">
+        {/* Layout with Sidebar - Changed `min-h-screen` to `flex-1` */}
+        <div className="flex flex-1 overflow-hidden">
+          {' '}
+          {/* Added `overflow-hidden` here */}
           {/* Sidebar */}
-          <aside className="w-20 bg-gray-800 flex flex-col py-6 px-2 items-center">
+          <aside className="w-20 bg-gray-800 flex flex-col py-6 px-2 items-center flex-shrink-0">
             <nav className="flex flex-col gap-6 w-full items-center">
               {sidebarLinks.map((link) => {
                 const isActive =
@@ -146,9 +145,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
               })}
             </nav>
           </aside>
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col min-h-screen">
-            <main className="overflow-y-auto">{children}</main>
+          {/* Main Content Area - Removed `min-h-screen`, added `flex-1` and `overflow-y-auto` */}
+          <div className="flex-1 flex flex-col">
+            <main className="flex-1 overflow-y-auto">
+              {' '}
+              {/* Added p-4 for padding */}
+              {children}
+            </main>
           </div>
         </div>
       </body>
